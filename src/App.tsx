@@ -74,7 +74,6 @@ const fighters = [
   "キングクルール",
   "しずえ",
   "ガオガエン",
-  "パックンフラワー",
 ];
 
 const fightersMii = [
@@ -84,6 +83,7 @@ const fightersMii = [
 ];
 
 const fightersDlc = [
+  "パックンフラワー",
   "ジョーカー",
   "勇者",
   "バンジョー＆カズーイ",
@@ -131,7 +131,17 @@ const BingoCard = ({
       case 2:
         return "blue";
       default:
-        return "gray";
+        return "white";
+    }
+  };
+  const getTextColor = (clickState: number) => {
+    switch (clickState) {
+      case 1:
+        return "white";
+      case 2:
+        return "white";
+      default:
+        return "black";
     }
   };
 
@@ -151,6 +161,7 @@ const BingoCard = ({
                     height: `${cellSize}px`,
                     fontSize: `${Math.max(10, cellSize / 5)}px`,
                     backgroundColor: getCellColor(clickStates[i][j]),
+                    color: getTextColor(clickStates[i][j]),
                     cursor: "pointer",
                   }}
                   onClick={() => handleCellClick(i, j)}
@@ -200,28 +211,34 @@ const BingoGenerator = () => {
           generateCard(size, !!DLC, !!Mii);
         }}
       >
-        <div>
+        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "20px" }}>
           <select value={size} onChange={(e) => setSize(Number(e.target.value))}>
             <option value={3}>3x3</option>
             <option value={5}>5x5</option>
             <option value={7}>7x7</option>
           </select>
-          <input
-            type="checkbox"
-            id="DLC"
-            name="DLC"
-            style={{ transform: "scale(2)", margin: "0 6px 0 0" }}
-          />
-          <label htmlFor="DLC">DLCを含む</label>
-          <input
-            type="checkbox"
-            id="Mii"
-            name="Mii"
-            style={{ transform: "scale(2)", margin: "0 6px 0 0" }}
-          />
-          <label htmlFor="Mii">Miiを含む</label>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "4px" }}>
+            <input
+              type="checkbox"
+              id="DLC"
+              name="DLC"
+              style={{ transform: "scale(2)", margin: "0 6px 0 0" }}
+            />
+            <label htmlFor="DLC">DLCを含む</label>
+          </div>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "4px" }}>
+            <input
+              type="checkbox"
+              id="Mii"
+              name="Mii"
+              style={{ transform: "scale(2)", margin: "0 6px 0 0" }}
+            />
+            <label htmlFor="Mii">Miiを含む</label>
+          </div>
         </div>
-        <button type="submit">新しいビンゴカードを生成</button>
+        <button style={{ color: "white" }} type="submit">
+          新しいビンゴカードを生成
+        </button>
       </form>
       <BingoCard
         size={size}
@@ -241,14 +258,15 @@ const styles = `
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background-color: gray;
+    background-color: white;
   }
   .bingo-card table {
     border-collapse: collapse;
     margin: 20px auto;
   }
   .bingo-card td {
-    border: 1px solid #fff;
+    border: 1px solid #000;
+    font-weight: bold;
     text-align: center;
     vertical-align: middle;
     transition: background-color 0.3s ease;
