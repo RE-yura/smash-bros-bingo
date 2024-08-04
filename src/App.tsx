@@ -1,6 +1,7 @@
 import "./App.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const fighters = [
   "マリオ",
@@ -86,7 +87,7 @@ const fightersDlc = [
   "パックンフラワー",
   "ジョーカー",
   "勇者",
-  "バンジョー＆カズーイ",
+  "バンジョー&カズーイ",
   "テリー",
   "ベレス",
   "ミェンミェン",
@@ -178,6 +179,14 @@ const BingoCard = ({
 };
 
 const BingoGenerator = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const queryFighters = useMemo(
+    () => searchParams.get("fighters")?.split(",") || [],
+    [searchParams]
+  );
+  const querySize = useMemo(() => Number(searchParams.get("size")) || 5, [searchParams]);
+
   const [size, setSize] = useState<number>(5);
   const [card, setCard] = useState<string[][]>([]);
   const [clickStates, setClickStates] = useState<number[][]>([]);
@@ -191,13 +200,33 @@ const BingoGenerator = () => {
     const newCard = Array(size)
       .fill("")
       .map(() => shuffled.splice(0, size));
+
+    const newFighters = newCard.flat().join(",");
+    navigate(`?size=${size}&fighters=${encodeURIComponent(newFighters)}`);
     setCard(newCard);
+
     setClickStates(
       Array(size)
         .fill("")
         .map(() => Array(size).fill(0))
     );
   };
+
+  useEffect(() => {
+    console.log(querySize, queryFighters);
+    if (querySize && queryFighters.length === querySize * querySize) {
+      const newCard = Array(querySize)
+        .fill("")
+        .map(() => queryFighters.splice(0, querySize));
+      setCard(newCard);
+      console.log(querySize, queryFighters, newCard);
+      setClickStates(
+        Array(querySize)
+          .fill("")
+          .map(() => Array(querySize).fill(0))
+      );
+    }
+  }, [querySize, queryFighters]);
 
   return (
     <div className="bingo-generator">
