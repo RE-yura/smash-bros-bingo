@@ -20,16 +20,21 @@ export function FighterCell({ fighter, mark, onClick }: Props): JSX.Element {
       onClick={onClick}
       aria-label={`${fighter.name}${MARK_LABELS[mark]}`}
       title={fighter.name}
-      className={`@container flex aspect-square min-w-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg p-1 shadow-sm transition select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:p-1.5 ${MARK_STYLES[mark]}`}
+      className={`@container aspect-square min-w-0 cursor-pointer rounded-lg shadow-sm transition select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${MARK_STYLES[mark]}`}
     >
-      <span className="block w-[72%] rounded-full bg-white/90 p-[6%] @min-[4.5rem]:w-[52%]">
-        <FighterIcon fighter={fighter} />
-      </span>
-      <span
-        aria-hidden="true"
-        className="hidden text-center text-[length:clamp(10px,11cqi,16px)] leading-tight font-bold @min-[4.5rem]:line-clamp-2"
-      >
-        {fighter.name}
+      {/* 余白・アイコン・文字の大きさはマスの幅（cqi）に合わせる */}
+      <span className="flex size-full flex-col items-center justify-center gap-[3cqi] p-[6cqi]">
+        <span className="block w-[46%] shrink-0 rounded-full bg-white/90 p-[6%] @min-[5rem]:w-[52%]">
+          <FighterIcon fighter={fighter} />
+        </span>
+        <span
+          aria-hidden="true"
+          className="line-clamp-2 w-full text-center text-balance [line-break:strict] text-[length:clamp(8px,19cqi,10px)] leading-[1.15] font-bold @min-[5rem]:text-[length:clamp(10px,11cqi,16px)]"
+        >
+          {/* 狭いマスでは略称、広いマスでは正式名 */}
+          <span className="@min-[5rem]:hidden">{fighter.shortName ?? fighter.name}</span>
+          <span className="hidden @min-[5rem]:inline">{fighter.name}</span>
+        </span>
       </span>
     </button>
   );
