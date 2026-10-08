@@ -60,3 +60,28 @@ describe("seriesColorClass", () => {
     expect(colors.size).toBeGreaterThanOrEqual(5);
   });
 });
+
+// 表示幅: 半角は 0.5、全角は 1 として数える
+const displayWidth = (text: string) =>
+  Array.from(text).reduce((width, char) => {
+    const code = char.codePointAt(0) ?? 0;
+    return width + (code < 0x80 || (code >= 0xff61 && code <= 0xff9f) ? 0.5 : 1);
+  }, 0);
+
+describe("shortName", () => {
+  it("is set for every name too wide for the smallest cells", () => {
+    const missing = FIGHTERS.filter((f) => displayWidth(f.name) >= 8 && !f.shortName);
+    expect(missing.map((f) => f.name)).toEqual([]);
+  });
+
+  it("fits the smallest cells", () => {
+    const tooWide = FIGHTERS.filter((f) => f.shortName && displayWidth(f.shortName) > 6);
+    expect(tooWide.map((f) => f.shortName)).toEqual([]);
+  });
+
+  it("uses the agreed abbreviations", () => {
+    expect(findFighter("captain_falcon")?.shortName).toBe("Cファルコン");
+    expect(findFighter("mii_brawler")?.shortName).toBe("Mii格闘");
+    expect(findFighter("mr_game_and_watch")?.shortName).toBe("ゲムヲ");
+  });
+});
