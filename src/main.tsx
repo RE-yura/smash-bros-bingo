@@ -1,18 +1,13 @@
+import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createHashRouter, RouterProvider } from "react-router-dom";
-import App from "./App.tsx";
+import { router } from "./router";
+import "./styles.css";
 
-import "./index.css";
+const container = document.getElementById("root");
+if (!container) throw new Error("#root element not found");
 
-const router = createHashRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-]);
-
-createRoot(document.getElementById("root")!).render(
+createRoot(container).render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>,
