@@ -16,6 +16,10 @@ export default defineConfig(({ mode }) => ({
       "react/exhaustive-deps": "error",
       "react/only-export-components": ["error", { allowConstantExport: true }],
     },
+    overrides: [
+      // ブラウザ確認スクリプトは結果を console に出す
+      { files: ["scripts/**"], rules: { "no-console": "off" } },
+    ],
     options: { typeAware: true, typeCheck: true },
     jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
   },

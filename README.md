@@ -24,7 +24,26 @@ https://re-yura.github.io/smash-bros-bingo/
 | `vp build`       | 本番ビルド（`dist/` に出力）                      |
 | `vp preview`     | 本番ビルドをローカルで確認                        |
 
-`main` ブランチに push すると、GitHub Actions が `vp check` → `vp test` → `vp build` を実行し、GitHub Pages にデプロイします。
+プルリクエストと `main` への push で、GitHub Actions が `vp check` → `vp test` → `vp build` を実行します。GitHub Pages へのデプロイは `main` のときだけ行います。
+
+### ブラウザでの確認
+
+画面の動きは、Playwright を使ったスクリプト（`scripts/e2e/`）で確かめます。Playwright はプロジェクトの依存には入れず、初回の実行時に `node_modules/.cache/e2e-playwright` へ自動で入れます。ブラウザは、インストール済みの Google Chrome を使います。
+
+| コマンド               | 内容                                                         |
+| ---------------------- | ------------------------------------------------------------ |
+| `npm run e2e`          | 本番ビルドを作り、`vp preview` に対して下の4つをまとめて実行 |
+| `npm run e2e -- <URL>` | 指定した URL（例: 公開サイト）に対して実行                   |
+
+| スクリプト             | 確かめること                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| `check.cjs`            | 主な操作（色の切り替え、URL での再現、戻る、不正な URL、画像が読めないとき、スマホ幅の表示など） |
+| `names-fit.cjs`        | 全ファイターの名前が、いくつかの画面幅と 3×3 / 5×5 / 7×7 で2行に収まるか                         |
+| `stale-fallback.cjs`   | 画像の読み込み失敗の状態が、新しいカードに持ち越されないか                                       |
+| `scroll.cjs`           | スマホでマスをタップしても、スクロール位置が変わらないか                                         |
+| `screenshot-board.cjs` | 盤面だけのスクリーンショットを撮る（見た目を見比べるとき用）                                     |
+
+Google Chrome が無い環境では `E2E_BROWSER_CHANNEL=` を付けて実行し、事前に `npx playwright@1.64.0 install chromium` を実行しておきます（バージョンは `scripts/e2e/lib.cjs` の `PLAYWRIGHT_VERSION` に合わせる）。スクリーンショットは OS の一時フォルダ（`E2E_OUT_DIR` で変更可）に保存されます。
 
 ## 構成
 
