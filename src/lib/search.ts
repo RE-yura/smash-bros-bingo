@@ -26,7 +26,8 @@ const toList = (value: unknown, separator: string): unknown[] | undefined => {
 };
 
 const toSize = (value: unknown): BoardSize => {
-  const size = typeof value === "string" ? Number(value) : value;
+  // URL からは "3" / "5" / "7" の1文字だけを受け付ける（"3.0" や " 3" は不正として扱う）
+  const size = typeof value === "string" && /^[357]$/.test(value) ? Number(value) : value;
   return isBoardSize(size) ? size : DEFAULT_SIZE;
 };
 

@@ -4,6 +4,8 @@ export type Fighter = {
   /** URL に入れる英字 ID（英語名ベース）。`.` は URL の区切りなので使わない */
   id: string;
   name: string;
+  /** 狭いマス用の略称。正式名が長いファイターにだけ付ける */
+  shortName?: string;
   /** 公式データのシリーズキー。アイコンが読めないときの色分けに使う */
   series: string;
   kind: FighterKind;
@@ -33,6 +35,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "captain_falcon",
     name: "キャプテン・ファルコン",
+    shortName: "Cファルコン",
     series: "f-zero",
     kind: "base",
     icon: "captain_falcon",
@@ -44,6 +47,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "ice_climbers",
     name: "アイスクライマー",
+    shortName: "アイクラ",
     series: "iceclimber",
     kind: "base",
     icon: "ice_climber",
@@ -63,6 +67,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "mr_game_and_watch",
     name: "Mr.ゲーム＆ウォッチ",
+    shortName: "ゲムヲ",
     series: "gamewatch",
     kind: "base",
     icon: "mr_game_and_watch",
@@ -73,6 +78,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "zero_suit_samus",
     name: "ゼロスーツサムス",
+    shortName: "ゼロサム",
     series: "metroid",
     kind: "base",
     icon: "zero_suit_samus",
@@ -83,6 +89,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "pokemon_trainer",
     name: "ポケモントレーナー",
+    shortName: "ポケトレ",
     series: "pokemon",
     kind: "base",
     icon: "pokemon_trainer",
@@ -90,6 +97,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "diddy_kong",
     name: "ディディーコング",
+    shortName: "ディディー",
     series: "donkeykong",
     kind: "base",
     icon: "diddy_kong",
@@ -100,6 +108,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "olimar",
     name: "ピクミン&オリマー",
+    shortName: "オリマー",
     series: "pikmin",
     kind: "base",
     icon: "pikmin_and_olimar",
@@ -113,6 +122,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "wii_fit_trainer",
     name: "Wii Fitトレーナー",
+    shortName: "Wii Fit",
     series: "wii_fit",
     kind: "base",
     icon: "wii_fit_trainer",
@@ -135,6 +145,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "mii_brawler",
     name: "Miiファイター（格闘タイプ）",
+    shortName: "Mii格闘",
     series: "mii",
     kind: "mii",
     icon: "mii_fighter",
@@ -142,6 +153,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "mii_swordfighter",
     name: "Miiファイター（剣術タイプ）",
+    shortName: "Mii剣術",
     series: "mii",
     kind: "mii",
     icon: "mii_fighter",
@@ -149,6 +161,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "mii_gunner",
     name: "Miiファイター（射撃タイプ）",
+    shortName: "Mii射撃",
     series: "mii",
     kind: "mii",
     icon: "mii_fighter",
@@ -180,6 +193,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "piranha_plant",
     name: "パックンフラワー",
+    shortName: "パックン",
     series: "mario",
     kind: "dlc",
     icon: "packun_flower",
@@ -189,6 +203,7 @@ export const FIGHTERS: readonly Fighter[] = [
   {
     id: "banjo_and_kazooie",
     name: "バンジョー&カズーイ",
+    shortName: "バンカズ",
     series: "banjo_and_kazooie",
     kind: "dlc",
     icon: "banjo_and_kazooie",

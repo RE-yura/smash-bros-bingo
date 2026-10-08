@@ -27,7 +27,8 @@ export function BingoBoard({ size, cells, marks, onCellClick }: Props): JSX.Elem
         const fighter = findFighter(id);
         if (!fighter) return null;
         return (
-          // 位置と ID の組み合わせを key にして、新しいカードで画像の失敗状態を引き継がない
+          // カード内でのマスの識別用。新しいカードで画像の失敗状態を持ち越さないのは、
+          // BingoPage で盤面全体に付けている key の役目
           <FighterCell
             key={`${index}:${id}`}
             fighter={fighter}
