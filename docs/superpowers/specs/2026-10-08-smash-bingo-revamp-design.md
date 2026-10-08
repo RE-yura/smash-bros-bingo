@@ -33,8 +33,9 @@
 
 ### 移行の進め方
 
-- `vp migrate` を実行し、差分を確認してから手で整える。
-- `vite.config.ts` は `vite-plus` から `defineConfig` を読み込む。oxlint の設定（`lint`）と oxfmt の設定（`fmt`）も同じファイルにまとめる。
+- 当初は `vp migrate` を使う予定だったが、作業用コピーで試したところ、lint 設定に約1,200行のグローバル変数一覧が出力され、vite-plus もローカル CLI の 1.0.0 に固定された。そのため移行ツールは使わず、同等の設定を手で書く。
+- `vite.config.ts` は `vite-plus` から `defineConfig` と `lazyPlugins` を読み込む。oxlint の設定（`lint`）と oxfmt の設定（`fmt`）も同じファイルにまとめる。プラグインは `lazyPlugins` で包む（`vp check` などで余計に読み込まないようにするため）。
+- 型チェックは `lint.options` の `typeAware: true` と `typeCheck: true` で有効にする（`vp check` が TypeScript 7 系の tsgolint で型を検査する）。
 - ESLint のルール（React Hooks の推奨ルール、react-refresh の `only-export-components`）は、oxlint に標準で入っている `react` プラグインの同等ルールで置き換える。あわせて `no-console` を有効にする。
 - `base` は今と同じく、本番ビルドだけ `/smash-bros-bingo/` にする。
 
@@ -50,7 +51,9 @@
 | devDependencies | `typescript`（エディタ用。型チェックは `vp check` が行う） | 7.0 |
 | devDependencies | `@types/react` / `@types/react-dom` | 19.3 |
 
-削除するもの: `react-router-dom`、`vite`（vite-plus が提供）、`@eslint/js`、`eslint`、`eslint-plugin-react-hooks`、`eslint-plugin-react-refresh`、`globals`、`typescript-eslint`、`eslint.config.js`、`overrides` フィールド。
+削除するもの: `react-router-dom`、`@eslint/js`、`eslint`、`eslint-plugin-react-hooks`、`eslint-plugin-react-refresh`、`globals`、`typescript-eslint`、`eslint.config.js`。
+
+`vite` は `"vite": "npm:@voidzero-dev/vite-plus-core@1.1.0"` という別名指定に置き換え、`overrides` にも同じ指定を書く。`@vitejs/plugin-react` と `@tailwindcss/vite` が `vite` を peer dependency として要求するので、それを vite-plus のコアに向けるため（`vp migrate` の出力と同じ方式）。
 
 ### package.json
 
@@ -61,8 +64,9 @@
 
 ### tsconfig
 
-- TypeScript 7 で削除・変更された項目に合わせて `tsconfig.app.json` / `tsconfig.node.json` を整理する。
-- `target` と `lib` は ES2023 以上に上げる。
+- `tsconfig.app.json` / `tsconfig.node.json` / `src/vite-env.d.ts` をやめ、`tsconfig.json` 1つにまとめる（対象は `src` と `vite.config.ts`）。
+- Vite の型は `"types": ["vite-plus/client"]` で読み込む。
+- `target` と `lib` は ES2023 にし、`noUncheckedIndexedAccess` と `verbatimModuleSyntax` を有効にする。
 
 ### GitHub Actions（`.github/workflows/static.yml`）
 
@@ -78,18 +82,20 @@
 export type FighterKind = "base" | "dlc" | "mii";
 
 export type Fighter = {
-  id: string; // URL に入れる英字 ID。公式サイトの画像名と同じ（例: "mario"）
+  id: string; // URL に入れる英字 ID。英語名ベース（例: "bowser"）。英小文字・数字・_ のみ
   name: string; // 日本語の表示名
-  series: string; // 出典シリーズ。画像が出ないときの色分けに使う
+  series: string; // 出典シリーズ（公式データのキー）。画像が出ないときの色分けに使う
   kind: FighterKind;
-  icon: string; // 公式アイコンのファイル名。Mii は3タイプとも "mii_fighter"
+  icon: string; // 公式アイコンのファイル名（例: "koopa"）。Mii は3タイプとも "mii_fighter"
 };
 ```
 
 - 並び順は公式のファイター番号順にする。
 - 収録数は今と同じ（基本71、Mii 3、DLC 12、計86）。表記は今のリストを引き継ぐ。
 - Mii の ID は `mii_brawler` / `mii_swordfighter` / `mii_gunner` とする（公式サイトに個別の画像はない）。
-- アイコンの URL は `https://www.smashbros.com/assets_v2/img/fighter/pict/{icon}.png`。パックンフラワーとホムラ･ヒカリは推測した名前（`piranha_plant`、`pyra`、`pyra_mythra`）では 404 になったので、実装時に公式サイトから正しい名前を調べる。そのうえで、全86件の URL が 200 を返すことを一度だけ確認する（このチェックはリポジトリには入れない）。
+- `series` と `icon` は公式サイトのデータ（`https://www.smashbros.com/assets_v2/data/fighter.json` の `series` と `file`）から取る。
+- アイコンの URL は `https://www.smashbros.com/assets_v2/img/fighter/pict/{icon}.png`。公式データの `file` を使えば、全84エントリーが 200 を返すことを確認済み（パックンフラワーは `packun_flower`、ホムラ / ヒカリは `homura`）。実装の最後にもう一度、全86件の URL を確認する（このチェックはリポジトリには入れない）。
+- `id` は URL で `.` 区切りに使うので、`.` を含めない。
 
 ### URL の形式
 
@@ -124,7 +130,7 @@ URL に書き出すときは、`dlc` / `mii` が false なら省略する。`mar
 
 ### 画面の操作と URL の関係
 
-- **初めて開いたとき（`cells` がない、または不正）:** 現在の `size` / `dlc` / `mii` でカードを自動生成し、`replace: true` で URL を書き換える（履歴は増やさない）。
+- **初めて開いたとき（`cells` がない、または不正）:** ルートの `beforeLoad` で、現在の `size` / `dlc` / `mii` を使ってカードを生成し、`redirect`（`replace: true`）で URL を書き換える（履歴は増やさない）。描画前に済むので、空の画面がちらつかない。
 - **「新しいカードを生成」を押したとき:** 設定欄の値と新しい `cells` で `navigate` する。履歴に追加するので、ブラウザの「戻る」で前のカードに戻れる。`marks` は空になる。
 - **マスをクリックしたとき:** そのマスの色を 白→赤→青→白 と進め、`marks` だけを `replace: true` で書き換える。
 - **設定欄:** サイズ・DLC・Mii は「次に作るカードの設定」として、コンポーネントの state で持つ。初期値は URL から取る。表示中のカードは常に URL の `size` と `cells` から描画する。
@@ -136,9 +142,11 @@ URL に書き出すときは、`dlc` / `mii` が false なら省略する。`mar
   - `generateCells(pool: Fighter[], size: number, random?: () => number): string[]`: Fisher–Yates でシャッフルし、先頭の size² 件の ID を返す。乱数は引数で差し替えられる。基本ファイターだけでも 71 ≥ 49 なので、7×7 でも足りる。
   - `cycleMark(marks: Mark[], index: number): Mark[]`: 指定したマスだけ 0→1→2→0 と進めた新しい配列を返す。
 - `search.ts`
-  - `parseSearch` / `stringifySearch`: `URLSearchParams` を使った読み書き
-  - `validateBingoSearch(raw: Record<string, unknown>): BingoSearch`
+  - `parseSearch` / `stringifySearch`: `URLSearchParams` を使った読み書き。`stringifySearch` は受け取った値を `validateBingoSearch` で整えてから書き出す
+  - `validateBingoSearch(raw: Record<string, unknown>): BingoSearch`: TanStack Router はナビゲーション時にも型付きの値でこの関数を呼ぶ。そのため、URL 由来の文字列（`"5"`、`"mario.link"`）と型付きの値（`5`、`["mario", "link"]`）のどちらを受け取っても同じ結果を返す（2回通しても結果が変わらない）
   - `toSearchParams(search: BingoSearch)`: 書き出し用。省略ルールを適用する
+  - `newCardSearch(settings, random?)`: 設定から新しいカード（`cells` と空の `marks`）を持つ `BingoSearch` を作る。`beforeLoad` の自動生成と「新しいカードを生成」ボタンの両方で使う
+- ルーターを組み込んだ状態のテストはしない。TanStack Router を Node で動かすと `window` が必要で、jsdom などの依存が増えるため。ルーターまわりはブラウザで確認する（6章）。
 
 ## 4. 画面（Tailwind CSS v4）
 
@@ -170,7 +178,8 @@ URL に書き出すときは、`dlc` / `mii` が false なら省略する。`mar
 - 名前を出すかどうかは Tailwind v4 のコンテナクエリで決める。マスの幅が狭いとき（スマホで 7×7 のときなど）は名前を隠す。その場合も `aria-label` と `title` で名前がわかるようにする。
 - 色の状態: 0 は明るい面、1 は赤、2 は青で塗る。アイコンは見えたままにする。`aria-label` は「マリオ（赤）」の形にする。
 - `<img>` には `referrerPolicy="no-referrer"`、`decoding="async"`、`alt=""` を付ける（名前はボタン側の `aria-label` で伝えるため）。
-- 画像が出ないときは、名前の1文字目を色付きの丸で表示する。色は `series` の文字列から決まった計算で選ぶ（8色程度のパレットから選択）。
+- 画像が出ないときは、名前の1文字目を色付きの丸で表示する。色は `series` の文字列から決まった計算で、8色の Tailwind クラス（`bg-rose-600` など）の中から選ぶ。インラインの style は使わない。
+- マスの React の `key` は「位置とファイター ID」の組み合わせにする。新しいカードを作ったときに、前のファイターの「画像の読み込み失敗」状態が別のファイターに引き継がれないようにするため。
 
 ## 5. 前回指摘した問題の解消
 
@@ -181,7 +190,8 @@ URL に書き出すときは、`dlc` / `mii` が false なら省略する。`mar
 | README が Vite テンプレートのまま | 日本語で書き直す（概要、公開 URL、遊び方、開発コマンド、画像の著作権についての注記） |
 | package.json の name が `vite-react-typescript-starter` | `smash-bros-bingo` にする |
 | `console.log` が残っている | 削除する。oxlint の `no-console` で再発を防ぐ |
-| ファビコンのファイルがない | 自作の SVG（赤・青のマスを含む 3×3 のグリッド。任天堂の素材は使わない）を `public/favicon.svg` に置く |
+| ファビコンが Vite のロゴのまま（当初「ファイルがない」と書いたのは誤り。`public/vite.svg` はあった） | 自作の SVG（赤・青のマスを含む 3×3 のグリッド。任天堂の素材は使わない）を `public/favicon.svg` に置き、`public/vite.svg` を削除する |
+| （追加）使われていない `src/assets/react.svg` が残っている | 削除する |
 | （追加）`useMemo` の結果の配列を `splice` で書き換えている | 3章の作り直しでこの処理自体がなくなる |
 | （追加）`index.html` が `lang="en"` | `lang="ja"` にする |
 
@@ -189,7 +199,8 @@ URL に書き出すときは、`dlc` / `mii` が false なら省略する。`mar
 
 ### 単体テスト（`vp test`、Vitest 5、Node 環境）
 
-- `fighters.ts`: 全86件、ID の重複なし、`kind` ごとの件数（71/3/12）、Mii の `icon` が `mii_fighter`
+- `fighters.ts`: 全86件、ID の重複なし、ID の文字種、`kind` ごとの件数（71/3/12）、Mii の `icon` が `mii_fighter`、`constructor` などのプロトタイプ由来の名前を ID として受け付けない
+- `newCardSearch`: 設定がそのまま入り、`cells` が size² 件、`marks` が全部 0
 - `buildPool`: DLC・Mii のオン/オフ4通りで件数が正しい
 - `generateCells`: 件数が size²、重複なし、すべて候補に含まれる、同じ乱数なら同じ結果
 - `cycleMark`: 0→1→2→0 と進み、ほかのマスは変わらない
