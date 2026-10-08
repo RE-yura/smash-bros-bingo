@@ -63,6 +63,8 @@ export function BingoPage(): JSX.Element {
                 return { ...current, marks: cycleMark(current.marks, index) };
               },
               replace: true,
+              // 色を変えるだけなので、スクロール位置はそのままにする（既定では先頭に戻る）
+              resetScroll: false,
             })
           }
         />
