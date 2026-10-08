@@ -1,50 +1,37 @@
-# React + TypeScript + Vite
+# スマブラビンゴ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+大乱闘スマッシュブラザーズ SPECIAL のファイターでビンゴカードを作る、非公式のファンサイトです。
 
-Currently, two official plugins are available:
+https://re-yura.github.io/smash-bros-bingo/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 遊び方
 
-## Expanding the ESLint configuration
+1. カードのサイズ（3×3 / 5×5 / 7×7）と、DLC ファイター・Mii ファイターを含めるかを選び、「新しいカードを生成」を押します。
+2. マスをクリックすると、赤 → 青 → なし の順に色が変わります。2人（2チーム）で色を分けて使えます。
+3. カードの中身と色はすべて URL に入っています。URL を共有すると、相手も同じカードを開けます。
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 開発
 
-- Configure the top-level `parserOptions` property like this:
+[Vite+](https://viteplus.dev/)（`vp` コマンド）を使います。Node.js は `^22.18.0 || ^24.11.0 || >=26.0.0` が必要です。
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+| コマンド         | 内容                                              |
+| ---------------- | ------------------------------------------------- |
+| `vp install`     | 依存パッケージをインストール                      |
+| `vp dev`         | 開発サーバーを起動                                |
+| `vp check`       | フォーマット（oxfmt）・lint（oxlint）・型チェック |
+| `vp check --fix` | フォーマットと lint の自動修正                    |
+| `vp test`        | 単体テスト（Vitest）                              |
+| `vp build`       | 本番ビルド（`dist/` に出力）                      |
+| `vp preview`     | 本番ビルドをローカルで確認                        |
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+`main` ブランチに push すると、GitHub Actions が `vp check` → `vp test` → `vp build` を実行し、GitHub Pages にデプロイします。
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## 構成
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- React 19 + TanStack Router（ページは1つ。状態はすべて URL のクエリに保存）
+- Tailwind CSS v4
+- ファイターのアイコンは公式サイト（smashbros.com）の画像を直接読み込んでいます。読み込めないときは名前の1文字目を表示します。
+
+## 権利表記
+
+非公式のファンサイトです。任天堂および各権利者とは関係ありません。画像の著作権は任天堂ほか各権利者に帰属します。

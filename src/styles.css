@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, sans-serif;
+  --color-ink: #0d0f14;
+  --color-panel: #171a22;
+  --color-cell: #f3efe6;
+  --color-team-red: #e5484d;
+  --color-team-blue: #3e63dd;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    background-image:
+      radial-gradient(60rem 30rem at 50% -10rem, rgb(229 72 77 / 0.18), transparent),
+      radial-gradient(50rem 30rem at 100% 110%, rgb(62 99 221 / 0.16), transparent);
+    background-attachment: fixed;
+    color: var(--color-zinc-100);
+    -webkit-tap-highlight-color: transparent;
+  }
+}

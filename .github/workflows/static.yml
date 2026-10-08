@@ -1,51 +1,64 @@
-# 静的コンテンツを GitHub Pages にデプロイするためのシンプルなワークフロー
-name: Deploy static content to Pages
+# PR と main への push でチェック・テスト・ビルドを行い、main のときだけ GitHub Pages にデプロイする
+name: CI
 
 on:
-  # デフォルトブランチを対象としたプッシュ時にで実行されます
   push:
-    branches: ['main']
-
-  # Actions タブから手動でワークフローを実行できるようにします
+    branches: ["main"]
+  pull_request:
+  # Actions タブから手動でも実行できるようにする
   workflow_dispatch:
 
-# GITHUB_TOKEN のパーミッションを設定し、GitHub Pages へのデプロイを許可します
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# 1 つの同時デプロイメントを可能にする
+# 同じブランチ・PR で新しい実行が始まったら、PR の古い実行は止める（main の実行は止めない）
 concurrency:
-  group: 'pages'
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # デプロイするだけなので、単一のデプロイジョブ
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v7
+      - name: Set up Vite+
+        # タグ v1 は更新が止まっているので、正確なバージョンで固定する
+        uses: voidzero-dev/setup-vp@v1.21.1
         with:
-          node-version: 20
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          node-version: "24"
+          cache: true
+      - name: Check
+        run: vp check
+      - name: Test
+        run: vp test
       - name: Build
-        run: npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+        run: vp build
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
         with:
-          # dist フォルダーのアップロード
-          path: './dist'
+          path: ./dist
+
+  deploy:
+    # デプロイは main のときだけ
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    # GITHUB_TOKEN に Pages へのデプロイを許可する
+    permissions:
+      pages: write
+      id-token: write
+    # 同時に走るデプロイは1つだけにし、実行中のデプロイは止めない
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
