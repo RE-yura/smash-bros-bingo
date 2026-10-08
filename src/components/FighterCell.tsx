@@ -24,7 +24,7 @@ export function FighterCell({ fighter, mark, onClick }: Props): JSX.Element {
     >
       {/* 余白・アイコン・文字の大きさはマスの幅（cqi）に合わせる */}
       <span className="flex size-full flex-col items-center justify-center gap-[3cqi] p-[6cqi]">
-        <span className="block w-[46%] shrink-0 rounded-full bg-white/90 p-[6%] @min-[5rem]:w-[52%]">
+        <span className="block w-[46%] shrink-0 @min-[5rem]:w-[52%]">
           <FighterIcon fighter={fighter} />
         </span>
         <span
