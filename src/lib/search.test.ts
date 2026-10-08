@@ -40,6 +40,13 @@ describe("validateBingoSearch", () => {
     expect(fromUrl(`?size=${size}`).size).toBe(5);
   });
 
+  it.each(["3.0", "%203", "0x3", "3e0", "%2B3", "03"])(
+    "accepts only the exact digits 3, 5 or 7 (size=%j falls back to 5)",
+    (size) => {
+      expect(fromUrl(`?size=${size}`).size).toBe(5);
+    },
+  );
+
   it("treats anything other than 1 as false for dlc and mii", () => {
     expect(fromUrl("?dlc=true&mii=0")).toMatchObject({ dlc: false, mii: false });
   });
@@ -89,6 +96,12 @@ describe("validateBingoSearch", () => {
 
   it("ignores unknown parameters such as the old fighters list", () => {
     expect(fromUrl("?size=3&fighters=%E3%83%9E%E3%83%AA%E3%82%AA")).toEqual(fromUrl("?size=3"));
+  });
+
+  it("is not affected by prototype names used as parameter keys", () => {
+    expect(fromUrl("?__proto__=1&constructor=x&toString=y&size=3")).toEqual(fromUrl("?size=3"));
+    expect(Object.getPrototypeOf(parseSearch("?__proto__=1"))).toBe(Object.prototype);
+    expect(({} as Record<string, unknown>).constructor).toBe(Object);
   });
 });
 
