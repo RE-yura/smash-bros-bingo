@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* docs/ の設計書・計画に書かれたコード例のクラス名を CSS に含めない */
+@source not "../docs";
+
 @theme {
   --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, sans-serif;
   --color-ink: #0d0f14;
