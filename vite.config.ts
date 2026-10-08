@@ -1,8 +1,22 @@
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, lazyPlugins } from "vite-plus";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === "production" ? "/smash-bros-bingo/" : undefined,
-  plugins: [react()],
+  base: mode === "production" ? "/smash-bros-bingo/" : "/",
+  plugins: lazyPlugins(() => [react(), tailwindcss()]),
+  fmt: {},
+  lint: {
+    plugins: ["oxc", "typescript", "unicorn", "react"],
+    categories: { correctness: "error" },
+    env: { browser: true, builtin: true },
+    rules: {
+      "no-console": "error",
+      "react/rules-of-hooks": "error",
+      "react/exhaustive-deps": "error",
+      "react/only-export-components": ["error", { allowConstantExport: true }],
+    },
+    options: { typeAware: true, typeCheck: true },
+    jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
+  },
 }));

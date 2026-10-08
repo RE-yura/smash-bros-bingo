@@ -41,39 +41,41 @@
 
 ## File Structure
 
-| ファイル | 状態 | 役割 |
-|---|---|---|
-| `package.json` / `package-lock.json` | 変更 | 依存とスクリプト |
-| `vite.config.ts` | 変更 | Vite+ の設定（ビルド・lint・fmt） |
-| `tsconfig.json` | 変更 | 1つにまとめた TypeScript 設定 |
-| `tsconfig.app.json` / `tsconfig.node.json` / `src/vite-env.d.ts` / `eslint.config.js` | 削除 | `tsconfig.json` と `vite.config.ts` に統合 |
-| `.github/workflows/static.yml` | 変更 | setup-vp で check / test / build → Pages |
-| `src/data/fighters.ts` (+ `.test.ts`) | 新規 | ファイターのデータと検索・アイコン URL・代替色 |
-| `src/lib/bingo.ts` (+ `.test.ts`) | 新規 | 盤面サイズ・マークの型、候補作成、シャッフル、色の切り替え |
-| `src/lib/search.ts` (+ `.test.ts`) | 新規 | URL ⇔ `BingoSearch` の変換と検証、新しいカードの生成 |
-| `src/router.ts` | 新規 | TanStack Router のルート定義と型登録 |
-| `src/main.tsx` | 変更 | ルーターを描画するだけ |
-| `src/styles.css` | 新規 | Tailwind の読み込みとテーマ |
-| `src/components/BingoPage.tsx` | 新規 | URL を読み、操作を `navigate` に変換する画面全体 |
-| `src/components/SettingsForm.tsx` | 新規 | サイズ・DLC・Mii の設定と生成ボタン |
-| `src/components/BingoBoard.tsx` | 新規 | size×size のグリッド |
-| `src/components/FighterCell.tsx` | 新規 | 1マス分のボタン |
-| `src/components/FighterIcon.tsx` | 新規 | 公式アイコンと、読めないときの代わりの表示 |
-| `src/App.tsx` / `src/App.css` / `src/index.css` / `src/assets/react.svg` | 削除 | 新しい構成に置き換え |
-| `index.html` | 変更 | `lang="ja"`、説明、ファビコン |
-| `public/favicon.svg` | 新規 | 自作ファビコン |
-| `public/vite.svg` | 削除 | 置き換え |
-| `README.md` | 変更 | 日本語で書き直し |
+| ファイル                                                                              | 状態 | 役割                                                       |
+| ------------------------------------------------------------------------------------- | ---- | ---------------------------------------------------------- |
+| `package.json` / `package-lock.json`                                                  | 変更 | 依存とスクリプト                                           |
+| `vite.config.ts`                                                                      | 変更 | Vite+ の設定（ビルド・lint・fmt）                          |
+| `tsconfig.json`                                                                       | 変更 | 1つにまとめた TypeScript 設定                              |
+| `tsconfig.app.json` / `tsconfig.node.json` / `src/vite-env.d.ts` / `eslint.config.js` | 削除 | `tsconfig.json` と `vite.config.ts` に統合                 |
+| `.github/workflows/static.yml`                                                        | 変更 | setup-vp で check / test / build → Pages                   |
+| `src/data/fighters.ts` (+ `.test.ts`)                                                 | 新規 | ファイターのデータと検索・アイコン URL・代替色             |
+| `src/lib/bingo.ts` (+ `.test.ts`)                                                     | 新規 | 盤面サイズ・マークの型、候補作成、シャッフル、色の切り替え |
+| `src/lib/search.ts` (+ `.test.ts`)                                                    | 新規 | URL ⇔ `BingoSearch` の変換と検証、新しいカードの生成       |
+| `src/router.ts`                                                                       | 新規 | TanStack Router のルート定義と型登録                       |
+| `src/main.tsx`                                                                        | 変更 | ルーターを描画するだけ                                     |
+| `src/styles.css`                                                                      | 新規 | Tailwind の読み込みとテーマ                                |
+| `src/components/BingoPage.tsx`                                                        | 新規 | URL を読み、操作を `navigate` に変換する画面全体           |
+| `src/components/SettingsForm.tsx`                                                     | 新規 | サイズ・DLC・Mii の設定と生成ボタン                        |
+| `src/components/BingoBoard.tsx`                                                       | 新規 | size×size のグリッド                                       |
+| `src/components/FighterCell.tsx`                                                      | 新規 | 1マス分のボタン                                            |
+| `src/components/FighterIcon.tsx`                                                      | 新規 | 公式アイコンと、読めないときの代わりの表示                 |
+| `src/App.tsx` / `src/App.css` / `src/index.css` / `src/assets/react.svg`              | 削除 | 新しい構成に置き換え                                       |
+| `index.html`                                                                          | 変更 | `lang="ja"`、説明、ファビコン                              |
+| `public/favicon.svg`                                                                  | 新規 | 自作ファビコン                                             |
+| `public/vite.svg`                                                                     | 削除 | 置き換え                                                   |
+| `README.md`                                                                           | 変更 | 日本語で書き直し                                           |
 
 ---
 
 ### Task 1: ツールチェーンを Vite+ に移行し、既存パッケージを最新化する
 
 **Files:**
+
 - Modify: `package.json`, `package-lock.json`, `vite.config.ts`, `tsconfig.json`, `.github/workflows/static.yml`, `src/App.tsx`
 - Delete: `tsconfig.app.json`, `tsconfig.node.json`, `src/vite-env.d.ts`, `eslint.config.js`
 
 **Interfaces:**
+
 - Consumes: なし
 - Produces: `vp check`（fmt + lint + 型チェック）、`vp test`、`vp build` が使える状態。以降のタスクはこの3コマンドで検証する。
 
@@ -250,6 +252,7 @@ Expected: フォーマットは通る。旧 `src/App.tsx` で lint / 型のエ�
 - [ ] **Step 7: 旧 App.tsx を最小限直す（このファイルは Task 5 で削除する）**
 
 `src/App.tsx` で次の3か所を直す。
+
 1. `useEffect` 内の `console.log(...)` 2行を削除する（前回指摘した問題の解消）。
 2. `shuffle` の入れ替えを `[newArray[i], newArray[j]] = [newArray[j]!, newArray[i]!];` にする。
 3. `clickStates[i][j]` の2か所を `clickStates[i]?.[j] ?? 0` にする。
@@ -276,10 +279,12 @@ Claude-Session: https://claude.ai/code/session_015SMGKH6TcUHaQsbYVuLsEg"
 ### Task 2: ファイターのデータ
 
 **Files:**
+
 - Create: `src/data/fighters.ts`
 - Test: `src/data/fighters.test.ts`
 
 **Interfaces:**
+
 - Consumes: なし
 - Produces:
   - `type FighterKind = "base" | "dlc" | "mii"`
@@ -385,7 +390,13 @@ export type Fighter = {
 /** 公式のファイター番号順 */
 export const FIGHTERS: readonly Fighter[] = [
   { id: "mario", name: "マリオ", series: "mario", kind: "base", icon: "mario" },
-  { id: "donkey_kong", name: "ドンキーコング", series: "donkeykong", kind: "base", icon: "donkey_kong" },
+  {
+    id: "donkey_kong",
+    name: "ドンキーコング",
+    series: "donkeykong",
+    kind: "base",
+    icon: "donkey_kong",
+  },
   { id: "link", name: "リンク", series: "zelda", kind: "base", icon: "link" },
   { id: "samus", name: "サムス", series: "metroid", kind: "base", icon: "samus" },
   { id: "dark_samus", name: "ダークサムス", series: "metroid", kind: "base", icon: "dark_samus" },
@@ -395,12 +406,24 @@ export const FIGHTERS: readonly Fighter[] = [
   { id: "pikachu", name: "ピカチュウ", series: "pokemon", kind: "base", icon: "pikachu" },
   { id: "luigi", name: "ルイージ", series: "mario", kind: "base", icon: "luigi" },
   { id: "ness", name: "ネス", series: "mother", kind: "base", icon: "ness" },
-  { id: "captain_falcon", name: "キャプテン・ファルコン", series: "f-zero", kind: "base", icon: "captain_falcon" },
+  {
+    id: "captain_falcon",
+    name: "キャプテン・ファルコン",
+    series: "f-zero",
+    kind: "base",
+    icon: "captain_falcon",
+  },
   { id: "jigglypuff", name: "プリン", series: "pokemon", kind: "base", icon: "purin" },
   { id: "peach", name: "ピーチ", series: "mario", kind: "base", icon: "peach" },
   { id: "daisy", name: "デイジー", series: "mario", kind: "base", icon: "daisy" },
   { id: "bowser", name: "クッパ", series: "mario", kind: "base", icon: "koopa" },
-  { id: "ice_climbers", name: "アイスクライマー", series: "iceclimber", kind: "base", icon: "ice_climber" },
+  {
+    id: "ice_climbers",
+    name: "アイスクライマー",
+    series: "iceclimber",
+    kind: "base",
+    icon: "ice_climber",
+  },
   { id: "sheik", name: "シーク", series: "zelda", kind: "base", icon: "sheik" },
   { id: "zelda", name: "ゼルダ", series: "zelda", kind: "base", icon: "zelda" },
   { id: "dr_mario", name: "ドクターマリオ", series: "mario", kind: "base", icon: "dr_mario" },
@@ -413,33 +436,99 @@ export const FIGHTERS: readonly Fighter[] = [
   { id: "mewtwo", name: "ミュウツー", series: "pokemon", kind: "base", icon: "mewtwo" },
   { id: "roy", name: "ロイ", series: "fireemblem", kind: "base", icon: "roy" },
   { id: "chrom", name: "クロム", series: "fireemblem", kind: "base", icon: "chrom" },
-  { id: "mr_game_and_watch", name: "Mr.ゲーム＆ウォッチ", series: "gamewatch", kind: "base", icon: "mr_game_and_watch" },
+  {
+    id: "mr_game_and_watch",
+    name: "Mr.ゲーム＆ウォッチ",
+    series: "gamewatch",
+    kind: "base",
+    icon: "mr_game_and_watch",
+  },
   { id: "meta_knight", name: "メタナイト", series: "kirby", kind: "base", icon: "meta_knight" },
   { id: "pit", name: "ピット", series: "palutena", kind: "base", icon: "pit" },
   { id: "dark_pit", name: "ブラックピット", series: "palutena", kind: "base", icon: "black_pit" },
-  { id: "zero_suit_samus", name: "ゼロスーツサムス", series: "metroid", kind: "base", icon: "zero_suit_samus" },
+  {
+    id: "zero_suit_samus",
+    name: "ゼロスーツサムス",
+    series: "metroid",
+    kind: "base",
+    icon: "zero_suit_samus",
+  },
   { id: "wario", name: "ワリオ", series: "wario", kind: "base", icon: "wario" },
   { id: "snake", name: "スネーク", series: "metalgear", kind: "base", icon: "snake" },
   { id: "ike", name: "アイク", series: "fireemblem", kind: "base", icon: "ike" },
-  { id: "pokemon_trainer", name: "ポケモントレーナー", series: "pokemon", kind: "base", icon: "pokemon_trainer" },
-  { id: "diddy_kong", name: "ディディーコング", series: "donkeykong", kind: "base", icon: "diddy_kong" },
+  {
+    id: "pokemon_trainer",
+    name: "ポケモントレーナー",
+    series: "pokemon",
+    kind: "base",
+    icon: "pokemon_trainer",
+  },
+  {
+    id: "diddy_kong",
+    name: "ディディーコング",
+    series: "donkeykong",
+    kind: "base",
+    icon: "diddy_kong",
+  },
   { id: "lucas", name: "リュカ", series: "mother", kind: "base", icon: "lucas" },
   { id: "sonic", name: "ソニック", series: "sonic", kind: "base", icon: "sonic" },
   { id: "king_dedede", name: "デデデ", series: "kirby", kind: "base", icon: "dedede" },
-  { id: "olimar", name: "ピクミン&オリマー", series: "pikmin", kind: "base", icon: "pikmin_and_olimar" },
+  {
+    id: "olimar",
+    name: "ピクミン&オリマー",
+    series: "pikmin",
+    kind: "base",
+    icon: "pikmin_and_olimar",
+  },
   { id: "lucario", name: "ルカリオ", series: "pokemon", kind: "base", icon: "lucario" },
   { id: "rob", name: "ロボット", series: "famicomrobot", kind: "base", icon: "robot" },
   { id: "toon_link", name: "トゥーンリンク", series: "zelda", kind: "base", icon: "toon_link" },
   { id: "wolf", name: "ウルフ", series: "starfox", kind: "base", icon: "wolf" },
   { id: "villager", name: "むらびと", series: "doubutsu", kind: "base", icon: "murabito" },
   { id: "mega_man", name: "ロックマン", series: "rockman", kind: "base", icon: "rockman" },
-  { id: "wii_fit_trainer", name: "Wii Fitトレーナー", series: "wii_fit", kind: "base", icon: "wii_fit_trainer" },
-  { id: "rosalina_and_luma", name: "ロゼッタ＆チコ", series: "mario", kind: "base", icon: "rosetta_and_chiko" },
-  { id: "little_mac", name: "リトル・マック", series: "punch_out", kind: "base", icon: "little_mac" },
+  {
+    id: "wii_fit_trainer",
+    name: "Wii Fitトレーナー",
+    series: "wii_fit",
+    kind: "base",
+    icon: "wii_fit_trainer",
+  },
+  {
+    id: "rosalina_and_luma",
+    name: "ロゼッタ＆チコ",
+    series: "mario",
+    kind: "base",
+    icon: "rosetta_and_chiko",
+  },
+  {
+    id: "little_mac",
+    name: "リトル・マック",
+    series: "punch_out",
+    kind: "base",
+    icon: "little_mac",
+  },
   { id: "greninja", name: "ゲッコウガ", series: "pokemon", kind: "base", icon: "gekkouga" },
-  { id: "mii_brawler", name: "Miiファイター（格闘タイプ）", series: "mii", kind: "mii", icon: "mii_fighter" },
-  { id: "mii_swordfighter", name: "Miiファイター（剣術タイプ）", series: "mii", kind: "mii", icon: "mii_fighter" },
-  { id: "mii_gunner", name: "Miiファイター（射撃タイプ）", series: "mii", kind: "mii", icon: "mii_fighter" },
+  {
+    id: "mii_brawler",
+    name: "Miiファイター（格闘タイプ）",
+    series: "mii",
+    kind: "mii",
+    icon: "mii_fighter",
+  },
+  {
+    id: "mii_swordfighter",
+    name: "Miiファイター（剣術タイプ）",
+    series: "mii",
+    kind: "mii",
+    icon: "mii_fighter",
+  },
+  {
+    id: "mii_gunner",
+    name: "Miiファイター（射撃タイプ）",
+    series: "mii",
+    kind: "mii",
+    icon: "mii_fighter",
+  },
   { id: "palutena", name: "パルテナ", series: "palutena", kind: "base", icon: "palutena" },
   { id: "pac_man", name: "パックマン", series: "pacman", kind: "base", icon: "pac_man" },
   { id: "robin", name: "ルフレ", series: "fireemblem", kind: "base", icon: "reflet" },
@@ -455,13 +544,31 @@ export const FIGHTERS: readonly Fighter[] = [
   { id: "ridley", name: "リドリー", series: "metroid", kind: "base", icon: "ridley" },
   { id: "simon", name: "シモン", series: "dracula", kind: "base", icon: "simon" },
   { id: "richter", name: "リヒター", series: "dracula", kind: "base", icon: "richter" },
-  { id: "king_k_rool", name: "キングクルール", series: "donkeykong", kind: "base", icon: "king_k_rool" },
+  {
+    id: "king_k_rool",
+    name: "キングクルール",
+    series: "donkeykong",
+    kind: "base",
+    icon: "king_k_rool",
+  },
   { id: "isabelle", name: "しずえ", series: "doubutsu", kind: "base", icon: "shizue" },
   { id: "incineroar", name: "ガオガエン", series: "pokemon", kind: "base", icon: "gaogaen" },
-  { id: "piranha_plant", name: "パックンフラワー", series: "mario", kind: "dlc", icon: "packun_flower" },
+  {
+    id: "piranha_plant",
+    name: "パックンフラワー",
+    series: "mario",
+    kind: "dlc",
+    icon: "packun_flower",
+  },
   { id: "joker", name: "ジョーカー", series: "persona", kind: "dlc", icon: "joker" },
   { id: "hero", name: "勇者", series: "dragonquest", kind: "dlc", icon: "dq_hero" },
-  { id: "banjo_and_kazooie", name: "バンジョー&カズーイ", series: "banjo_and_kazooie", kind: "dlc", icon: "banjo_and_kazooie" },
+  {
+    id: "banjo_and_kazooie",
+    name: "バンジョー&カズーイ",
+    series: "banjo_and_kazooie",
+    kind: "dlc",
+    icon: "banjo_and_kazooie",
+  },
   { id: "terry", name: "テリー", series: "garou", kind: "dlc", icon: "terry" },
   { id: "byleth", name: "ベレス", series: "fireemblem", kind: "dlc", icon: "byleth" },
   { id: "min_min", name: "ミェンミェン", series: "arms", kind: "dlc", icon: "minmin" },
@@ -521,10 +628,12 @@ Claude-Session: https://claude.ai/code/session_015SMGKH6TcUHaQsbYVuLsEg"
 ### Task 3: カードのロジック（候補・シャッフル・色）
 
 **Files:**
+
 - Create: `src/lib/bingo.ts`
 - Test: `src/lib/bingo.test.ts`
 
 **Interfaces:**
+
 - Consumes: `FIGHTERS`, `type Fighter`（Task 2）
 - Produces:
   - `const BOARD_SIZES: readonly [3, 5, 7]`、`type BoardSize = 3 | 5 | 7`
@@ -543,14 +652,7 @@ Claude-Session: https://claude.ai/code/session_015SMGKH6TcUHaQsbYVuLsEg"
 ```ts
 import { describe, expect, it } from "vite-plus/test";
 import { FIGHTERS } from "../data/fighters";
-import {
-  buildPool,
-  cycleMark,
-  emptyMarks,
-  generateCells,
-  isBoardSize,
-  type Mark,
-} from "./bingo";
+import { buildPool, cycleMark, emptyMarks, generateCells, isBoardSize, type Mark } from "./bingo";
 
 // 再現できるシャッフルのための小さな乱数生成器（mulberry32）
 const seeded = (seed: number) => () => {
@@ -716,10 +818,12 @@ Claude-Session: https://claude.ai/code/session_015SMGKH6TcUHaQsbYVuLsEg"
 ### Task 4: URL ⇔ 状態の変換と検証
 
 **Files:**
+
 - Create: `src/lib/search.ts`
 - Test: `src/lib/search.test.ts`
 
 **Interfaces:**
+
 - Consumes: `isFighterId`（Task 2）、`buildPool` / `generateCells` / `emptyMarks` / `isBoardSize` / `type BoardSize` / `type CardSettings` / `type Mark`（Task 3）
 - Produces:
   - `type BingoSearch = CardSettings & { cells?: string[]; marks: Mark[] }`
@@ -830,7 +934,13 @@ describe("validateBingoSearch", () => {
 
 describe("toSearchParams / stringifySearch", () => {
   it("omits false flags and all-zero marks", () => {
-    const search: BingoSearch = { size: 3, dlc: false, mii: false, cells: cells9, marks: emptyMarks(3) };
+    const search: BingoSearch = {
+      size: 3,
+      dlc: false,
+      mii: false,
+      cells: cells9,
+      marks: emptyMarks(3),
+    };
     expect(toSearchParams(search).toString()).toBe(`size=3&cells=${cells9.join(".")}`);
   });
 
@@ -998,11 +1108,13 @@ Claude-Session: https://claude.ai/code/session_015SMGKH6TcUHaQsbYVuLsEg"
 ### Task 5: TanStack Router と Tailwind で画面を作り直す
 
 **Files:**
+
 - Create: `src/router.ts`, `src/styles.css`, `src/components/BingoPage.tsx`, `src/components/SettingsForm.tsx`, `src/components/BingoBoard.tsx`, `src/components/FighterCell.tsx`, `src/components/FighterIcon.tsx`
 - Modify: `src/main.tsx`, `package.json`, `package-lock.json`
 - Delete: `src/App.tsx`, `src/App.css`, `src/index.css`, `src/assets/react.svg`
 
 **Interfaces:**
+
 - Consumes: `findFighter` / `iconUrl` / `seriesColorClass` / `type Fighter`（Task 2）、`BOARD_SIZES` / `cycleMark` / `type BoardSize` / `type CardSettings` / `type Mark`（Task 3）、`newCardSearch` / `parseSearch` / `stringifySearch` / `validateBingoSearch`（Task 4）
 - Produces: `router`（`src/router.ts`）。ルート `/` の search の型は `BingoSearch`
 
@@ -1306,7 +1418,8 @@ export function BingoPage(): JSX.Element {
         </span>
         <span aria-hidden="true">→</span>
         <span className="inline-flex items-center gap-1">
-          <span className="size-3 rounded-sm bg-cell" />なし
+          <span className="size-3 rounded-sm bg-cell" />
+          なし
         </span>
       </p>
 
@@ -1398,6 +1511,7 @@ Expected: エラー0件、全テスト PASS、ビルド成功。型エラーで 
 
 Run: `vp dev`（バックグラウンドで起動）し、ブラウザで `http://localhost:5173/` を開く（run スキル、またはこのセッションで使えるブラウザ操作ツールを使う）。
 Expected:
+
 - 開くとすぐ `?size=5&cells=…` に置き換わり、5×5 のカードにアイコンと名前が表示される
 - マスをクリックすると 赤 → 青 → なし と変わり、URL の `marks` が更新される。リロードしても色が残る
 - サイズを 3×3 にして生成すると 3×3 になり、ブラウザの「戻る」で前の 5×5 に戻る（設定欄も 5×5 に戻る）
@@ -1418,11 +1532,13 @@ Claude-Session: https://claude.ai/code/session_015SMGKH6TcUHaQsbYVuLsEg"
 ### Task 6: ファビコン・index.html・README
 
 **Files:**
+
 - Create: `public/favicon.svg`
 - Modify: `index.html`, `README.md`
 - Delete: `public/vite.svg`
 
 **Interfaces:**
+
 - Consumes: なし
 - Produces: なし
 
@@ -1491,15 +1607,15 @@ https://re-yura.github.io/smash-bros-bingo/
 
 [Vite+](https://viteplus.dev/)（`vp` コマンド）を使います。Node.js は `^22.18.0 || ^24.11.0 || >=26.0.0` が必要です。
 
-| コマンド | 内容 |
-| --- | --- |
-| `vp install` | 依存パッケージをインストール |
-| `vp dev` | 開発サーバーを起動 |
-| `vp check` | フォーマット（oxfmt）・lint（oxlint）・型チェック |
-| `vp check --fix` | フォーマットと lint の自動修正 |
-| `vp test` | 単体テスト（Vitest） |
-| `vp build` | 本番ビルド（`dist/` に出力） |
-| `vp preview` | 本番ビルドをローカルで確認 |
+| コマンド         | 内容                                              |
+| ---------------- | ------------------------------------------------- |
+| `vp install`     | 依存パッケージをインストール                      |
+| `vp dev`         | 開発サーバーを起動                                |
+| `vp check`       | フォーマット（oxfmt）・lint（oxlint）・型チェック |
+| `vp check --fix` | フォーマットと lint の自動修正                    |
+| `vp test`        | 単体テスト（Vitest）                              |
+| `vp build`       | 本番ビルド（`dist/` に出力）                      |
+| `vp preview`     | 本番ビルドをローカルで確認                        |
 
 `main` ブランチに push すると、GitHub Actions が `vp check` → `vp test` → `vp build` を実行し、GitHub Pages にデプロイします。
 
@@ -1534,9 +1650,11 @@ Claude-Session: https://claude.ai/code/session_015SMGKH6TcUHaQsbYVuLsEg"
 ### Task 7: 最終確認
 
 **Files:**
+
 - なし（問題が見つかったら該当ファイルを直し、`🐛 fix: …` でコミットする）
 
 **Interfaces:**
+
 - Consumes: Task 1〜6 のすべて
 - Produces: 検証済みのブランチ
 
@@ -1548,18 +1666,21 @@ Expected: すべて成功
 - [ ] **Step 2: 全86件のアイコン URL を確認する（リポジトリには入れない一度きりの確認）**
 
 Run:
+
 ```bash
 grep -oE 'icon: "[a-z0-9_]+"' src/data/fighters.ts | sed 's/icon: "//; s/"//' | sort -u | while read icon; do
   code=$(curl -s -o /dev/null -w "%{http_code}" "https://www.smashbros.com/assets_v2/img/fighter/pict/$icon.png")
   [ "$code" = 200 ] || echo "NG $icon $code"
 done; echo done
 ```
+
 Expected: `NG` の行が無く、`done` だけが表示される
 
 - [ ] **Step 3: 本番と同じ base でブラウザ確認する**
 
 Run: `vp preview`（バックグラウンドで起動。表示された URL、通常は `http://localhost:4173/smash-bros-bingo/` を開く）
 Expected（幅 375px と 1280px の両方で確認する）:
+
 - 3×3・5×5・7×7 のどれも横スクロールが出ない。7×7 を幅 375px で見ると名前が隠れ、アイコンだけになる
 - アイコンが表示される。マスのクリックで 赤 → 青 → なし と変わる。リロードしても色が残る
 - URL を別のタブで開くと、同じカードと色が再現される

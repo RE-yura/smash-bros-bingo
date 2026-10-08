@@ -102,7 +102,7 @@ const shuffle = (array: string[]) => {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    [newArray[i], newArray[j]] = [newArray[j]!, newArray[i]!];
   }
   return newArray;
 };
@@ -120,7 +120,7 @@ const BingoCard = ({
 }) => {
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     const newClickStates = clickStates.map((row, i) =>
-      row.map((cell, j) => (i === rowIndex && j === colIndex ? (cell + 1) % 3 : cell))
+      row.map((cell, j) => (i === rowIndex && j === colIndex ? (cell + 1) % 3 : cell)),
     );
     setClickStates(newClickStates);
   };
@@ -161,8 +161,8 @@ const BingoCard = ({
                     width: `${cellSize}px`,
                     height: `${cellSize}px`,
                     fontSize: `${Math.max(10, cellSize / 5)}px`,
-                    backgroundColor: getCellColor(clickStates[i][j]),
-                    color: getTextColor(clickStates[i][j]),
+                    backgroundColor: getCellColor(clickStates[i]?.[j] ?? 0),
+                    color: getTextColor(clickStates[i]?.[j] ?? 0),
                     cursor: "pointer",
                   }}
                   onClick={() => handleCellClick(i, j)}
@@ -183,7 +183,7 @@ const BingoGenerator = () => {
   const [searchParams] = useSearchParams();
   const queryFighters = useMemo(
     () => searchParams.get("fighters")?.split(",") || [],
-    [searchParams]
+    [searchParams],
   );
   const querySize = useMemo(() => Number(searchParams.get("size")) || 5, [searchParams]);
 
@@ -208,22 +208,21 @@ const BingoGenerator = () => {
     setClickStates(
       Array(size)
         .fill("")
-        .map(() => Array(size).fill(0))
+        .map(() => Array(size).fill(0)),
     );
   };
 
   useEffect(() => {
-    console.log(querySize, queryFighters);
     if (querySize && queryFighters.length === querySize * querySize) {
       const newCard = Array(querySize)
         .fill("")
         .map(() => queryFighters.splice(0, querySize));
+      // oxlint-disable-next-line react/set-state-in-effect -- 旧コード。Task 5 でファイルごと削除する
       setCard(newCard);
-      console.log(querySize, queryFighters, newCard);
       setClickStates(
         Array(querySize)
           .fill("")
-          .map(() => Array(querySize).fill(0))
+          .map(() => Array(querySize).fill(0)),
       );
     }
   }, [querySize, queryFighters]);

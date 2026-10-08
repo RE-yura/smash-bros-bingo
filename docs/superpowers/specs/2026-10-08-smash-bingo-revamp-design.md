@@ -41,15 +41,15 @@
 
 ### 依存パッケージ（2026-10-08 時点の最新版）
 
-| 種類 | パッケージ | バージョン |
-|---|---|---|
-| dependencies | `react` / `react-dom` | 19.3 |
-| dependencies | `@tanstack/react-router` | 1.170 |
-| devDependencies | `vite-plus`（Vite 8 互換コア・oxlint・oxfmt・Vitest 5 を同梱） | 1.1 |
-| devDependencies | `@vitejs/plugin-react` | 6.1 |
-| devDependencies | `tailwindcss` / `@tailwindcss/vite` | 4.3 |
-| devDependencies | `typescript`（エディタ用。型チェックは `vp check` が行う） | 7.0 |
-| devDependencies | `@types/react` / `@types/react-dom` | 19.3 |
+| 種類            | パッケージ                                                     | バージョン |
+| --------------- | -------------------------------------------------------------- | ---------- |
+| dependencies    | `react` / `react-dom`                                          | 19.3       |
+| dependencies    | `@tanstack/react-router`                                       | 1.170      |
+| devDependencies | `vite-plus`（Vite 8 互換コア・oxlint・oxfmt・Vitest 5 を同梱） | 1.1        |
+| devDependencies | `@vitejs/plugin-react`                                         | 6.1        |
+| devDependencies | `tailwindcss` / `@tailwindcss/vite`                            | 4.3        |
+| devDependencies | `typescript`（エディタ用。型チェックは `vp check` が行う）     | 7.0        |
+| devDependencies | `@types/react` / `@types/react-dom`                            | 19.3       |
 
 削除するもの: `react-router-dom`、`@eslint/js`、`eslint`、`eslint-plugin-react-hooks`、`eslint-plugin-react-refresh`、`globals`、`typescript-eslint`、`eslint.config.js`。
 
@@ -101,13 +101,13 @@ export type Fighter = {
 
 例: `https://re-yura.github.io/smash-bros-bingo/?size=5&dlc=1&mii=1&cells=mario.link.kirby…&marks=0120…`
 
-| パラメータ | 中身 | 不正なとき |
-|---|---|---|
-| `size` | `3` / `5` / `7` | 5 として扱う |
-| `dlc` | `1` なら DLC ファイターを候補に含める | 含めない |
-| `mii` | `1` なら Mii ファイターを候補に含める | 含めない |
-| `cells` | ファイター ID を `.` でつないだもの（size² 個） | 知らない ID・重複・個数違いがあれば、カードなしとして扱う |
-| `marks` | 各マスの色を1文字ずつ（`0`=なし、`1`=赤、`2`=青） | 長さが size² でない、または `0`〜`2` 以外の文字を含むなら、全マス `0` |
+| パラメータ | 中身                                              | 不正なとき                                                            |
+| ---------- | ------------------------------------------------- | --------------------------------------------------------------------- |
+| `size`     | `3` / `5` / `7`                                   | 5 として扱う                                                          |
+| `dlc`      | `1` なら DLC ファイターを候補に含める             | 含めない                                                              |
+| `mii`      | `1` なら Mii ファイターを候補に含める             | 含めない                                                              |
+| `cells`    | ファイター ID を `.` でつないだもの（size² 個）   | 知らない ID・重複・個数違いがあれば、カードなしとして扱う             |
+| `marks`    | 各マスの色を1文字ずつ（`0`=なし、`1`=赤、`2`=青） | 長さが size² でない、または `0`〜`2` 以外の文字を含むなら、全マス `0` |
 
 - TanStack Router は標準で URL の値を JSON として読み書きする。そのままだと `marks=1200` が数値になったり、文字列に `"` が付いたりする。そこで、ルーター作成時に `parseSearch` / `stringifySearch` を `URLSearchParams` を使う関数に差し替え、値はすべて文字列のまま受け渡す。
 - 型への変換と値のチェックは、ルートの `validateSearch` で自前の関数を使って行う。zod は使わない。
@@ -160,15 +160,15 @@ URL に書き出すときは、`dlc` / `mii` が false なら省略する。`mar
 
 ### コンポーネント構成
 
-| ファイル | 役割 |
-|---|---|
-| `src/main.tsx` | ルーターを作って描画する（`basepath` は `import.meta.env.BASE_URL`、`parseSearch` / `stringifySearch` は差し替え版） |
-| `src/router.tsx` | ルートの定義（ルート1つと、`validateSearch` 付きの index ルート）と型登録 |
-| `src/components/BingoPage.tsx` | URL を読み、自動生成・カード生成・マスのクリックを `navigate` に変換する |
-| `src/components/SettingsForm.tsx` | サイズ（3/5/7 の切り替えボタン）、DLC・Mii のトグル、生成ボタン |
-| `src/components/BingoBoard.tsx` | size×size の CSS グリッド。幅は `min(100%, 640px)`、マスは正方形 |
-| `src/components/FighterCell.tsx` | 1マス分の `<button>`。アイコン、名前、色の状態を表示する |
-| `src/components/FighterIcon.tsx` | 公式アイコンの `<img>`。読み込みに失敗したら、代わりの表示に切り替える |
+| ファイル                          | 役割                                                                                                                 |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `src/main.tsx`                    | ルーターを作って描画する（`basepath` は `import.meta.env.BASE_URL`、`parseSearch` / `stringifySearch` は差し替え版） |
+| `src/router.tsx`                  | ルートの定義（ルート1つと、`validateSearch` 付きの index ルート）と型登録                                            |
+| `src/components/BingoPage.tsx`    | URL を読み、自動生成・カード生成・マスのクリックを `navigate` に変換する                                             |
+| `src/components/SettingsForm.tsx` | サイズ（3/5/7 の切り替えボタン）、DLC・Mii のトグル、生成ボタン                                                      |
+| `src/components/BingoBoard.tsx`   | size×size の CSS グリッド。幅は `min(100%, 640px)`、マスは正方形                                                     |
+| `src/components/FighterCell.tsx`  | 1マス分の `<button>`。アイコン、名前、色の状態を表示する                                                             |
+| `src/components/FighterIcon.tsx`  | 公式アイコンの `<img>`。読み込みに失敗したら、代わりの表示に切り替える                                               |
 
 ほかに、ヘッダー（タイトル「スマブラビンゴ」）、凡例（「クリックで 赤 → 青 → なし」と色見本）、フッターを置く。フッターには「非公式のファンサイトです。画像の著作権は任天堂ほか各権利者に帰属します。」と書く。
 
@@ -183,17 +183,17 @@ URL に書き出すときは、`dlc` / `mii` が false なら省略する。`mar
 
 ## 5. 前回指摘した問題の解消
 
-| 問題 | 対応 |
-|---|---|
-| 共有 URL で開くと、マスの大きさとセレクトボックスが 5×5 のまま | カードは常に URL の `size` から描画し、設定欄の初期値も URL から取る（3章） |
-| マスの色が保存されない | `marks` パラメータに保存する（3章） |
-| README が Vite テンプレートのまま | 日本語で書き直す（概要、公開 URL、遊び方、開発コマンド、画像の著作権についての注記） |
-| package.json の name が `vite-react-typescript-starter` | `smash-bros-bingo` にする |
-| `console.log` が残っている | 削除する。oxlint の `no-console` で再発を防ぐ |
+| 問題                                                                                                 | 対応                                                                                                                                |
+| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 共有 URL で開くと、マスの大きさとセレクトボックスが 5×5 のまま                                       | カードは常に URL の `size` から描画し、設定欄の初期値も URL から取る（3章）                                                         |
+| マスの色が保存されない                                                                               | `marks` パラメータに保存する（3章）                                                                                                 |
+| README が Vite テンプレートのまま                                                                    | 日本語で書き直す（概要、公開 URL、遊び方、開発コマンド、画像の著作権についての注記）                                                |
+| package.json の name が `vite-react-typescript-starter`                                              | `smash-bros-bingo` にする                                                                                                           |
+| `console.log` が残っている                                                                           | 削除する。oxlint の `no-console` で再発を防ぐ                                                                                       |
 | ファビコンが Vite のロゴのまま（当初「ファイルがない」と書いたのは誤り。`public/vite.svg` はあった） | 自作の SVG（赤・青のマスを含む 3×3 のグリッド。任天堂の素材は使わない）を `public/favicon.svg` に置き、`public/vite.svg` を削除する |
-| （追加）使われていない `src/assets/react.svg` が残っている | 削除する |
-| （追加）`useMemo` の結果の配列を `splice` で書き換えている | 3章の作り直しでこの処理自体がなくなる |
-| （追加）`index.html` が `lang="en"` | `lang="ja"` にする |
+| （追加）使われていない `src/assets/react.svg` が残っている                                           | 削除する                                                                                                                            |
+| （追加）`useMemo` の結果の配列を `splice` で書き換えている                                           | 3章の作り直しでこの処理自体がなくなる                                                                                               |
+| （追加）`index.html` が `lang="en"`                                                                  | `lang="ja"` にする                                                                                                                  |
 
 ## 6. テストと動作確認
 
