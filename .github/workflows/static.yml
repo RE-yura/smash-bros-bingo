@@ -40,6 +40,33 @@ jobs:
         with:
           path: ./dist
 
+  e2e:
+    # ブラウザ確認は PR のときだけ流す（main にはマージ前に確かめたものが入る）。
+    # 外部サイト（smashbros.com）の画像を使うので、デプロイの条件にはしない
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Vite+
+        uses: voidzero-dev/setup-vp@v1.21.1
+        with:
+          node-version: "24"
+          cache: true
+      - name: Install Japanese fonts
+        # 名前の折り返しを実際の表示に近い条件で確かめるため
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+      - name: Browser checks
+        run: npm run e2e
+        env:
+          E2E_OUT_DIR: ${{ runner.temp }}/e2e
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-screenshots
+          path: ${{ runner.temp }}/e2e
+
   deploy:
     # デプロイは main のときだけ
     if: github.ref == 'refs/heads/main'

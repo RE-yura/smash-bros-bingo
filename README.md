@@ -26,6 +26,8 @@ https://re-yura.github.io/smash-bros-bingo/
 
 プルリクエストと `main` への push で、GitHub Actions が `vp check` → `vp test` → `vp build` を実行します。GitHub Pages へのデプロイは `main` のときだけ行います。
 
+プルリクエストでは、あわせて下の「ブラウザでの確認」（`npm run e2e`）も実行します。失敗したときのスクリーンショットは、実行結果の成果物（`e2e-screenshots`）から確認できます。
+
 ### ブラウザでの確認
 
 画面の動きは、Playwright を使ったスクリプト（`scripts/e2e/`）で確かめます。Playwright はプロジェクトの依存には入れず、初回の実行時に `node_modules/.cache/e2e-playwright` へ自動で入れます。ブラウザは、インストール済みの Google Chrome を使います。
